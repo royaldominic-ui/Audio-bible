@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holy Bible - Complete with Working Audio & Search</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #8B4513;
+            --primary-light: #D2691E;
+            --accent: #DAA520;
+            --bg-light: #FFF8DC;
+            --bg-cream: #FFFAF0;
+            --text-dark: #2C1810;
+            --text-gray: #5D4E37;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-cream) 0%, var(--bg-light) 100%);
+            color: var(--text-dark);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 2px solid white;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .version-select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .book-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .book-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .book-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .book-item:hover {
+            background: var(--bg-light);
+        }
+
+        .book-item.active {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .votd {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .votd-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .votd-text {
+            font-family: 'Crimson Text', serif;
+            font-size: 20px;
+            line-height: 1.8;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .audio-player {
+            background: var(--bg-light);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .play-btn:hover {
+            background: var(--primary-light);
+            transform: scale(1.05);
+        }
+
+        .progress-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .time-display {
+            font-size: 13px;
+            color: var(--text-gray);
+            font-weight: 600;
+            min-width: 100px;
+        }
+
+        .audio-status {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .chapter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        .chapter-title {
+            font-family: 'Crimson Text', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .chapter-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .verses {
+            font-family: 'Crimson Text', serif;
+            font-size: 18px;
+            line-height: 2;
+        }
+
+        .verse {
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 35px;
+            transition: all 0.3s;
+        }
+
+        .verse:hover {
+            background: var(--bg-light);
+            padding: 10px;
+            padding-left: 35px;
+            border-radius: 6px;
+        }
+
+        .verse-num {
+            position: absolute;
+            left: 10px;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .chapter-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--bg-light);
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-gray);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            color: var(--text-gray);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: var(--bg-light);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        }
+
+        .search-results {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .search-result {
+            padding: 15px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-result:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .search-reference {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .search-result:hover .search-reference {
+            color: white;
+        }
+
+        .search-text {
+            font-family: 'Crimson Text', serif;
+            line-height: 1.6;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span style="font-size: 32px;">✝️</span>
+                <div>
+                    <div>Holy Bible</div>
+                    <div style="font-size: 12px; opacity: 0.9; font-weight: 400;">Read. Listen. Search.</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn" onclick="openSearch()">🔍 Search</button>
+                <button class="btn" onclick="showBookmarks()">⭐ Bookmarks</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-layout">
+            <div class="sidebar">
+                <select class="version-select" id="versionSelect" onchange="changeVersion()">
+                    <option value="kjv">King James Version</option>
+                    <option value="web">World English Bible</option>
+                </select>
+
+                <div class="book-section">
+                    <div class="section-title">Old Testament</div>
+                    <div class="book-list" id="oldTestament"></div>
+                </div>
+
+                <div class="book-section">
+                    <div class="section-title">New Testament</div>
+                    <div class="book-list" id="newTestament"></div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="votd">
+                    <div class="votd-label">📖 Verse of the Day</div>
+                    <div class="votd-text" id="votdText">Loading verse...</div>
+                    <div class="votd-reference" id="votdRef"></div>
+                </div>
+
+                <div class="audio-player">
+                    <div class="player-header">
+                        <div style="font-weight: 600; color: var(--primary);">🎧 Audio Bible</div>
+                        <div class="audio-status" id="audioStatus">Ready to play</div>
+                    </div>
+                    <div class="player-controls">
+                        <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
+                        <div class="progress-container">
+                            <div class="progress-bar" onclick="seekAudio(event)">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="time-display" id="audioTime">0:00 / 0:00</div>
+                        </div>
+                    </div>
+                    <audio id="audioElement" preload="metadata"></audio>
+                </div>
+
+                <div class="chapter-header">
+                    <h1 class="chapter-title" id="chapterTitle">Loading...</h1>
+                    <div class="chapter-controls">
+                        <button class="control-btn" onclick="addBookmark()">⭐ Bookmark</button>
+                    </div>
+                </div>
+
+                <div class="verses" id="versesContainer">
+                    <div class="loading">Loading verses...</div>
+                </div>
+
+                <div class="chapter-nav">
+                    <button class="nav-btn" id="prevBtn" onclick="prevChapter()">← Previous</button>
+                    <button class="nav-btn" id="nextBtn" onclick="nextChapter()">Next →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Modal -->
+    <div class="modal" id="searchModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🔍 Search Bible</h2>
+                <button class="close-modal" onclick="closeSearch()">×</button>
+            </div>
+            <input type="text" class="search-box" placeholder="Search for verses (e.g., 'love', 'faith', 'hope')..." id="searchInput" onkeyup="handleSearchKeyup(event)">
+            <div style="margin-bottom: 15px; color: var(--text-gray); font-size: 13px;">
+                Press Enter to search or type at least 3 characters
+            </div>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+
+    <script>
+        // Complete Bible structure with ALL books
+        const bibleBooks = {
+            old: [
+                {name: 'Genesis', id: 'Gen', chapters: 50},
+                {name: 'Exodus', id: 'Exod', chapters: 40},
+                {name: 'Leviticus', id: 'Lev', chapters: 27},
+                {name: 'Numbers', id: 'Num', chapters: 36},
+                {name: 'Deuteronomy', id: 'Deut', chapters: 34},
+                {name: 'Joshua', id: 'Josh', chapters: 24},
+                {name: 'Judges', id: 'Judg', chapters: 21},
+                {name: 'Ruth', id: 'Ruth', chapters: 4},
+                {name: '1 Samuel', id: '1Sam', chapters: 31},
+                {name: '2 Samuel', id: '2Sam', chapters: 24},
+                {name: '1 Kings', id: '1Kgs', chapters: 22},
+                {name: '2 Kings', id: '2Kgs', chapters: 25},
+                {name: '1 Chronicles', id: '1Chr', chapters: 29},
+                {name: '2 Chronicles', id: '2Chr', chapters: 36},
+                {name: 'Ezra', id: 'Ezra', chapters: 10},
+                {name: 'Nehemiah', id: 'Neh', chapters: 13},
+                {name: 'Esther', id: 'Esth', chapters: 10},
+                {name: 'Job', id: 'Job', chapters: 42},
+                {name: 'Psalms', id: 'Ps', chapters: 150},
+                {name: 'Proverbs', id: 'Prov', chapters: 31},
+                {name: 'Ecclesiastes', id: 'Eccl', chapters: 12},
+                {name: 'Song of Solomon', id: 'Song', chapters: 8},
+                {name: 'Isaiah', id: 'Isa', chapters: 66},
+                {name: 'Jeremiah', id: 'Jer', chapters: 52},
+                {name: 'Lamentations', id: 'Lam', chapters: 5},
+                {name: 'Ezekiel', id: 'Ezek', chapters: 48},
+                {name: 'Daniel', id: 'Dan', chapters: 12},
+                {name: 'Hosea', id: 'Hos', chapters: 14},
+                {name: 'Joel', id: 'Joel', chapters: 3},
+                {name: 'Amos', id: 'Amos', chapters: 9},
+                {name: 'Obadiah', id: 'Obad', chapters: 1},
+                {name: 'Jonah', id: 'Jonah', chapters: 4},
+                {name: 'Micah', id: 'Mic', chapters: 7},
+                {name: 'Nahum', id: 'Nah', chapters: 3},
+                {name: 'Habakkuk', id: 'Hab', chapters: 3},
+                {name: 'Zephaniah', id: 'Zeph', chapters: 3},
+                {name: 'Haggai', id: 'Hag', chapters: 2},
+                {name: 'Zechariah', id: 'Zech', chapters: 14},
+                {name: 'Malachi', id: 'Mal', chapters: 4}
+            ],
+            new: [
+                {name: 'Matthew', id: 'Matt', chapters: 28},
+                {name: 'Mark', id: 'Mark', chapters: 16},
+                {name: 'Luke', id: 'Luke', chapters: 24},
+                {name: 'John', id: 'John', chapters: 21},
+                {name: 'Acts', id: 'Acts', chapters: 28},
+                {name: 'Romans', id: 'Rom', chapters: 16},
+                {name: '1 Corinthians', id: '1Cor', chapters: 16},
+                {name: '2 Corinthians', id: '2Cor', chapters: 13},
+                {name: 'Galatians', id: 'Gal', chapters: 6},
+                {name: 'Ephesians', id: 'Eph', chapters: 6},
+                {name: 'Philippians', id: 'Phil', chapters: 4},
+                {name: 'Colossians', id: 'Col', chapters: 4},
+                {name: '1 Thessalonians', id: '1Thess', chapters: 5},
+                {name: '2 Thessalonians', id: '2Thess', chapters: 3},
+                {name: '1 Timothy', id: '1Tim', chapters: 6},
+                {name: '2 Timothy', id: '2Tim', chapters: 4},
+                {name: 'Titus', id: 'Titus', chapters: 3},
+                {name: 'Philemon', id: 'Phlm', chapters: 1},
+                {name: 'Hebrews', id: 'Heb', chapters: 13},
+                {name: 'James', id: 'Jas', chapters: 5},
+                {name: '1 Peter', id: '1Pet', chapters: 5},
+                {name: '2 Peter', id: '2Pet', chapters: 3},
+                {name: '1 John', id: '1John', chapters: 5},
+                {name: '2 John', id: '2John', chapters: 1},
+                {name: '3 John', id: '3John', chapters: 1},
+                {name: 'Jude', id: 'Jude', chapters: 1},
+                {name: 'Revelation', id: 'Rev', chapters: 22}
+            ]
+        };
+
+        let currentBook = 'John';
+        let currentChapter = 3;
+        let currentVersion = 'kjv';
+        let audioElement = null;
+
+        // Initialize
+        function init() {
+            audioElement = document.getElementById('audioElement');
+            setupAudioEvents();
+            renderBooks();
+            loadChapter('John', 3);
+            loadVerseOfDay();
+        }
+
+        // Setup audio events
+        function setupAudioEvents() {
+            audioElement.addEventListener('loadedmetadata', () => {
+                updateTimeDisplay();
+                document.getElementById('audioStatus').textContent = 'Ready to play';
+            });
+
+            audioElement.addEventListener('timeupdate', updateProgress);
+            
+            audioElement.addEventListener('play', () => {
+                document.getElementById('playBtn').textContent = '⏸';
+                document.getElementById('audioStatus').textContent = 'Playing...';
+            });
+
+            audioElement.addEventListener('pause', () => {
+                document.getElementById('playBtn').textContent = '▶';
+                document.getElementById('audioStatus').textContent = 'Paused';
+            });
+
+            audioElement.addEventListener('ended', () => {
+                document.getElementById('playBtn').textContent = '▶';
+                document.getElementById('audioStatus').textContent = 'Finished';
+            });
+
+            audioElement.addEventListener('error', (e) => {
+                console.error('Audio error:', e);
+                document.getElementById('audioStatus').textContent = 'Audio not available';
+            });
+        }
+
+        // Render all books
+        function renderBooks() {
+            const otContainer = document.getElementById('oldTestament');
+            const ntContainer = document.getElementById('newTestament');
+
+            otContainer.innerHTML = bibleBooks.old.map(book => `
+                <div class="book-item" onclick="loadBook('${book.id}', '${book.name}')">
+                    <span>${book.name}</span>
+                    <span style="font-size: 12px; color: var(--text-gray);">${book.chapters}</span>
+                </div>
+            `).join('');
+
+            ntContainer.innerHTML = bibleBooks.new.map(book => `
+                <div class="book-item" onclick="loadBook('${book.id}', '${book.name}')">
+                    <span>${book.name}</span>
+                    <span style="font-size: 12px; color: var(--text-gray);">${book.chapters}</span>
+                </div>
+            `).join('');
+        }
+
+        // Load book
+        function loadBook(bookId, bookName) {
+            currentBook = bookId;
+            currentChapter = 1;
+            loadChapter(bookId, 1);
+            
+            // Update active state
+            document.querySelectorAll('.book-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent.includes(bookName)) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Load chapter from API
+        async function loadChapter(book, chapter) {
+            currentBook = book;
+            currentChapter = chapter;
+            
+            document.getElementById('versesContainer').innerHTML = '<div class="loading">Loading verses...</div>';
+            document.getElementById('audioStatus').textContent = 'Loading audio...';
+            
+            try {
+                // Using Bible API (free, no auth required)
+                const response = await fetch(`https://bible-api.com/${book}+${chapter}?translation=${currentVersion}`);
+                const data = await response.json();
+                
+                document.getElementById('chapterTitle').textContent = data.reference;
+                
+                const verses = data.verses.map(verse => `
+                    <div class="verse">
+                        <span class="verse-num">${verse.verse}</span>
+                        ${verse.text}
+                    </div>
+                `).join('');
+                
+                document.getElementById('versesContainer').innerHTML = verses;
+                
+                // Load audio with fallback
+                loadAudioWithFallback(book, chapter);
+                
+            } catch (error) {
+                console.error('Error loading chapter:', error);
+                document.getElementById('versesContainer').innerHTML = '<div class="loading">Error loading chapter. Please try again.</div>';
+            }
+        }
+
+        // Load audio with multiple fallback URLs
+        function loadAudioWithFallback(book, chapter) {
+            const urls = [
+                // Try Drama Bible first (ESV)
+                `https://audio.esv.org/david-cochran-heath/mq/${book}${chapter.toString().padStart(3, '0')}.mp3`,
+                // Try Bible.is
+                `https://audio.bible.is/bible/ENGESVO2ET/${book}/${chapter}.mp3`,
+                // Try another format
+                `https://audio.bible.is/bible/ENGESVN2DA/${book}/${chapter}.mp3`
+            ];
+
+            let urlIndex = 0;
+
+            function tryNextUrl() {
+                if (urlIndex >= urls.length) {
+                    document.getElementById('audioStatus').textContent = 'Audio not available for this chapter';
+                    return;
+                }
+
+                audioElement.src = urls[urlIndex];
+                audioElement.load();
+
+                audioElement.onerror = () => {
+                    urlIndex++;
+                    tryNextUrl();
+                };
+
+                audioElement.onloadeddata = () => {
+                    document.getElementById('audioStatus').textContent = 'Audio ready!';
+                };
+            }
+
+            tryNextUrl();
+        }
+
+        // Audio controls
+        function toggleAudio() {
+            if (audioElement.paused) {
+                audioElement.play().catch(err => {
+                    console.error('Play error:', err);
+                    document.getElementById('audioStatus').textContent = 'Cannot play audio';
+                });
+            } else {
+                audioElement.pause();
+            }
+        }
+
+        function updateProgress() {
+            if (audioElement.duration) {
+                const progress = (audioElement.currentTime / audioElement.duration) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+                updateTimeDisplay();
+            }
+        }
+
+        function updateTimeDisplay() {
+            const current = formatTime(audioElement.currentTime);
+            const duration = formatTime(audioElement.duration);
+            document.getElementById('audioTime').textContent = `${current} / ${duration}`;
+        }
+
+        function seekAudio(event) {
+            const progressBar = event.currentTarget;
+            const clickX = event.offsetX;
+            const width = progressBar.offsetWidth;
+            const duration = audioElement.duration;
+            
+            if (duration) {
+                audioElement.currentTime = (clickX / width) * duration;
+            }
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds) || !isFinite(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Navigation
+        function prevChapter() {
+            if (currentChapter > 1) {
+                loadChapter(currentBook, currentChapter - 1);
+            }
+        }
+
+        function nextChapter() {
+            loadChapter(currentBook, currentChapter + 1);
+        }
+
+        // Verse of the day
+        async function loadVerseOfDay() {
+            try {
+                const response = await fetch('https://bible-api.com/john+3:16');
+                const data = await response.json();
+                document.getElementById('votdText').textContent = data.text;
+                document.getElementById('votdRef').textContent = data.reference;
+            } catch (error) {
+                console.error('Error loading verse of the day:', error);
+            }
+        }
+
+        // Search functionality
+        function openSearch() {
+            document.getElementById('searchModal').classList.add('active');
+            document.getElementById('searchInput').focus();
+        }
+
+        function closeSearch() {
+            document.getElementById('searchModal').classList.remove('active');
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('searchInput').value = '';
+        }
+
+        function handleSearchKeyup(event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        }
+
+        async function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (query.length < 3) {
+                resultsContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-gray);">Please enter at least 3 characters</div>';
+                return;
+            }
+
+            resultsContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-gray);">Searching...</div>';
+
+            try {
+                // Search through multiple verses
+                const searchPromises = [
+                    fetch(`https://bible-api.com/${query}`).then(r => r.json()).catch(() => null),
+                    fetch(`https://bible-api.com/search?q=${encodeURIComponent(query)}`).then(r => r.json()).catch(() => null)
+                ];
+
+                const results = await Promise.all(searchPromises);
+                const validResults = results.filter(r => r && r.verses);
+
+                if (validResults.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div style="padding: 20px; text-align: center; color: var(--text-gray);">
+                            No results found. Try searching for:<br>
+                            • Book names (e.g., "John 3:16")<br>
+                            • Keywords (e.g., "love", "faith", "hope")<br>
+                            • Phrases (e.g., "for God so loved")
+                        </div>
+                    `;
+                    return;
+                }
+
+                let allVerses = [];
+                validResults.forEach(result => {
+                    if (result.verses) {
+                        allVerses = allVerses.concat(result.verses);
+                    }
+                });
+
+                if (allVerses.length === 0) {
+                    resultsContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-gray);">No verses found</div>';
+                    return;
+                }
+
+                resultsContainer.innerHTML = allVerses.slice(0, 10).map(verse => `
+                    <div class="search-result" onclick="goToVerse('${verse.book_name}', ${verse.chapter})">
+                        <div class="search-reference">${verse.book_name} ${verse.chapter}:${verse.verse}</div>
+                        <div class="search-text">${verse.text}</div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Search error:', error);
+                resultsContainer.innerHTML = `
+                    <div style="padding: 20px; text-align: center; color: var(--text-gray);">
+                        Try searching for specific verses like:<br>
+                        • "John 3:16"<br>
+                        • "Psalm 23"<br>
+                        • "Romans 8:28"
+                    </div>
+                `;
+            }
+        }
+
+        function goToVerse(bookName, chapter) {
+            // Find book ID from name
+            const allBooks = [...bibleBooks.old, ...bibleBooks.new];
+            const book = allBooks.find(b => b.name === bookName);
+            
+            if (book) {
+                loadBook(book.id, book.name);
+                closeSearch();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Version change
+        function changeVersion() {
+            currentVersion = document.getElementById('versionSelect').value;
+            loadChapter(currentBook, currentChapter);
+        }
+
+        // Bookmarks
+        function addBookmark() {
+            const bookmark = {
+                book: currentBook,
+                chapter: currentChapter,
+                date: new Date().toLocaleDateString()
+            };
+            
+            let bookmarks = JSON.parse(localStorage.getItem('bibleBookmarks') || '[]');
+            bookmarks.push(bookmark);
+            localStorage.setItem('bibleBookmarks', JSON.stringify(bookmarks));
+            
+            alert('✅ Bookmark added!');
+        }
+
+        function showBookmarks() {
+            const bookmarks = JSON.parse(localStorage.getItem('bibleBookmarks') || '[]');
+            if (bookmarks.length === 0) {
+                alert('No bookmarks yet. Click ⭐ Bookmark to save chapters!');
+            } else {
+                alert(`You have ${bookmarks.length} bookmarks saved!`);
+            }
+        }
+
+        // Initialize app
+        init();
+    </script>
+</body>
+</html>
